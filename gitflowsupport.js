@@ -1,12 +1,12 @@
 var graphConfig = new GitGraph.Template({
-  colors: [ "#9993FF", "#47E8D4", "#6BDB52", "#F85BB5", "#FFA657", "#F85BB5" ],
+  colors: [ "#9993FF", "#47E8D4", "#6BDB52", "#F85BB5", "#FFA657", "#129de8","#e8ae11","#129de8"],
   branch: {
     color: "#000000",
     lineWidth: 3,
     spacingX: 60,
     mergeStyle: "straight",
     showLabel: true, // display branch names on graph
-    labelFont: "normal 10pt Arial",
+    labelFont: "normal 12pt Arial",
     labelRotation: 0
   },
   commit: {
@@ -17,12 +17,12 @@ var graphConfig = new GitGraph.Template({
       strokeWidth: 4
     },
     tag: {
-      font: "normal 10pt Arial",
+      font: "normal 13pt Arial",
       color: "yellow"
     },
     message: {
       color: "black",
-      font: "normal 12pt Arial",
+      font: "bold 12pt Arial",
       displayAuthor: false,
       displayBranch: false,
       displayHash: false,
@@ -54,14 +54,6 @@ var stabilizationCommit = {
   message: "Release stabilization commit(s)"
 };
 
-// You can manually fix columns to control the display.
-/*var featureCol = 0;
-var developCol = 1;
-var releaseCol = 2;
-var supportCol = 3;
-var support2Col = 5;
-var masterCol = 4;*/
-
 var releaseCol = 0;
 var masterCol = 1;
 var devBranchCol = 2;
@@ -70,6 +62,7 @@ var generalBranchCol = 4;
 var generalCol = 5;
 var saasBranchCol = 6;
 var saasCol = 7;
+var newGeneralBranchCol = 8;
 
 
 var gitgraph = new GitGraph(config);
@@ -110,17 +103,37 @@ var feature1 = gitgraph.branch({
   name: "feature/개선A",
   column: devBranchCol
 });
-feature1.commit("A기능 개선");
-feature1.merge(develop);
+////저....밑에서 머지할거임..
 
 /*general 브랜치의 bugfix 생성*/
 var bugfix1 = gitgraph.branch({
   parentBranch: general,
-  name: "bugfix/버그B",
+  name: "bugfix/고객사요청버그",
   column: generalBranchCol
 });
 bugfix1.commit("B버그 수정");
 bugfix1.merge(general);
+
+/*2.5.3.1-saas 브랜치의 bugfix 생성*/
+var bugfix2 = gitgraph.branch({
+  parentBranch: saas,
+  name: "bugfix/사스요청버그",
+  column: saasBranchCol
+});
+bugfix2.commit("사스버그 수정");
+bugfix2.merge(saas);
+saas.commit("");
+
+/*월요일 정기머지*/
+saas.merge(general,{
+     message: "월요일 정기 머지(saas업데이트까지,10월중순)"
+});
+general.merge(develop,{
+     message: "월요일 정기 머지"
+});
+
+general.commit("");
+saas.commit("");
 
 /*hotfix브랜치 생성 , 태그용*/
 var hotfix1 = gitgraph.branch({
@@ -130,264 +143,75 @@ var hotfix1 = gitgraph.branch({
 });
 hotfix1.commit("hotFix");
 hotfix1.commit("버그C commit");
+hotfix1.commit("버그D commit");
+hotfix1.commit("버그E commit");
 hotfix1.merge(general);
 hotfix1.merge(develop);
-hotfix1.merge(master, {
+develop.merge(master, {
   dotStrokeWidth: 10,
   message: "Release 2.5.5.2 tagged",
   tag: "tags/2.5.5.2"
 });
 
-
-
-
-/*
-var feature1 = gitgraph.branch({
-  parentBranch: develop,
-  name: "feature/1",
-  column: featureCol
-});
-feature1.commit("A feature to go into v1.0.0").commit({
-  messageDisplay: false
-});
+feature1.commit("A기능 개선");
 feature1.merge(develop);
 
-var feature2 = gitgraph.branch({
-  parentBranch: develop,
-  name: "feature/2",
-  column: featureCol
-});
-feature2.commit("Another feature to go into v1.0.0").commit({
-  messageDisplay: false
-});
-feature2.merge(develop);
+general.commit("중간중간 수정");
 
-var release_100 = gitgraph.branch({
-  parentBranch: develop,
-  name: "release/v1.0.0",
-  column: releaseCol
+/*2.5.3.1-saas 브랜치의 bugfix 생성*/
+var bugfix3 = gitgraph.branch({
+  parentBranch: saas,
+  name: "bugfix/사스요청버그",
+  column: saasBranchCol
 });
-release_100.commit({
-  message: "Start v1.0.0-rc Release Candidate builds",
-  tag: "v1.0.0-rc",
-  tagColor: 'gray'
+bugfix3.commit("사스버그 수정");
+bugfix3.merge(saas);
+
+/*general 브랜치의 bugfix 생성*/
+var bugfix4 = gitgraph.branch({
+  parentBranch: general,
+  name: "bugfix/고객사요청버그",
+  column: generalBranchCol
 });
-develop.commit({
-  messageDisplay: false
+bugfix4.commit("B버그 수정");
+bugfix4.merge(general);
+
+/*월요일 정기머지*/
+saas.commit("11");
+saas.merge(general,{
+     message: "월요일 정기 머지(saas업데이트까지,10월중순)"
 });
-release_100.commit(stabilizationCommit);
-release_100.merge(master, {
+general.merge(develop,{
+     message: "월요일 정기 머지"
+});
+general.commit("commit");
+
+/* release 브랜치 생성 , 태그용*/
+var release = gitgraph.branch({
+  parentBranch: general,
+  name: "release/2.5.6.0",
+  column: generalBranchCol
+});
+release.commit("butFix");
+release.commit("버그F commit");
+release.commit("버그G commit");
+release.commit("버그H commit");
+//release.merge(general);
+release.merge(develop);
+develop.merge(master, {
   dotStrokeWidth: 10,
-  message: "Release v1.0.0 tagged",
-  tag: "v1.0.0"
-});
-master.merge(develop);
-
-var support_10x = gitgraph.branch({
-  parentBranch: master,
-  name: "support/v1.0.x",
-  column: supportCol
+  message: "Release 2.5.6.0",
+  tag: "tags/2.5.6.0"
 });
 
-support_10x.commit({
-  message: "Start v1.0.1-rc Release Candidate builds",
-  tag: "v1.0.1-rc",
-  tagColor: 'gray'
-}).commit(bugFixCommit);
-develop.commit({
-  messageDisplay: false
-});
+saas.commit("committtttt");
+//general.commit("committttt");
+develop.commit("committtt");
+master.commit("committtt");
 
-var feature3 = gitgraph.branch({
-  parentBranch: develop,
-  name: "feature/3",
-  column: featureCol
+var general_2_5_6_0 = gitgraph.branch({
+  name: "general/2.5.6.0",
+  column: newGeneralBranchCol
 });
-
-feature3.commit("A feature to go into v1.1.0").commit({
-  messageDisplay: false
-});
-feature3.merge(develop);
-
-support_10x.commit({
-  dotStrokeWidth: 10,
-  message: "Release v1.0.1 tagged",
-  tag: "v1.0.1"
-}).merge(develop);
-
-develop.commit({
-  messageDisplay: false
-});
-support_10x.commit({
-  message: "Start v1.0.2-rc Release Candidate builds",
-  tag: "v1.0.2-rc",
-  tagColor: 'gray'
-})
-support_10x.commit(bugFixCommit).commit({
-  dotStrokeWidth: 10,
-  message: "Release v1.0.2 tagged",
-  tag: 'v1.0.2'
-});
-support_10x.merge(develop);
-develop.commit({
-  messageDisplay: false
-});
-
-var release_110 = gitgraph.branch({
-  parentBranch: develop,
-  name: "release/v1.1.0",
-  column: releaseCol
-});
-release_110.commit({
-  message: "Start v1.1.0-rc Release Candidate builds",
-  tag: "v1.1.0-rc",
-  tagColor: 'gray'
-})
-release_110.commit(stabilizationCommit);
-release_110.merge(master, {
-  dotStrokeWidth: 10,
-  message: "Release v1.1.0 tagged",
-  tag: "v1.1.0"
-});
-master.merge(develop);
-
-var support_11x = gitgraph.branch({
-  parentBranch: master,
-  name: "support/v1.1.x",
-  column: supportCol
-});
-support_11x.commit({
-  message: "Start v1.1.1-rc Release Candidate builds",
-  tag: "v1.1.1-rc",
-  tagColor: 'gray'
-})
-support_11x.commit(bugFixCommit).commit({
-  dotStrokeWidth: 10,
-  message: "Release v1.1.1 tagged",
-  tag: "v1.1.1"
-});
-support_11x.merge(develop);
-develop.commit({
-  messageDisplay: false
-});
-
-var feature4 = gitgraph.branch({
-  parentBranch: develop,
-  name: "feature/4",
-  column: featureCol
-});
-develop.commit({
-  messageDisplay: false
-});
-feature4.commit("A feature to go into v2.0.0").commit({
-  messageDisplay: false
-});
-feature4.merge(develop);
-
-support_11x.commit({
-  message: "Start v1.1.2-rc Release Candidate builds",
-  tag: "v1.1.2-rc",
-  tagColor: 'gray'
-})
-support_11x.commit(bugFixCommit).commit({
-  dotStrokeWidth: 10,
-  message: "Release v1.1.2",
-  tag: "v1.1.2"
-});
-support_11x.merge(develop);
-develop.commit({
-  messageDisplay: false
-});
-
-var feature5 = gitgraph.branch({
-  parentBranch: develop,
-  name: "feature/5",
-  column: featureCol
-});
-develop.commit({
-  messageDisplay: false
-});
-feature5.commit("Another feature to go into v1.2.0").commit({
-  messageDisplay: false
-});
-feature5.merge(develop);
-
-develop.commit({
-  messageDisplay: false
-});
-
-var release_200 = gitgraph.branch({
-  parentBranch: develop,
-  name: "release/v2.0.0",
-  column: releaseCol
-});
-release_200.commit({
-  message: "Start v2.0.0-rc Release Candidate builds",
-  tag: "v2.0.0-rc",
-  tagColor: 'gray'
-})
-release_200.commit(stabilizationCommit);
-release_200.merge(master, {
-  dotStrokeWidth: 10,
-  message: "Release v2.0.0 tagged",
-  tag: "v2.0.0"
-});
-master.merge(develop);
-develop.commit({
-  messageDisplay: false
-});
-support_11x.commit({
-  message: "Release v1.1.3-rc tagged",
-  tag: "1.1.3-rc",
-  tagColor: 'gray'
-});
-
-var feature6 = gitgraph.branch({
-  parentBranch: develop,
-  name: "feature/6",
-  column: featureCol
-});
-feature6.commit("Feature to go into v2.0.0").commit({
-  messageDisplay: false
-});
-var support_20x = gitgraph.branch({
-  parentBranch: master,
-  name: "support/v2.0.x",
-  column: support2Col
-});
-support_20x.commit({
-  message: "Release v2.0.1-rc tagged",
-  tag: "v2.0.1-rc",
-  tagColor: 'gray'
-});
-support_20x.commit().commit({
-  dotStrokeWidth: 10,
-  message: "Release v2.0.1 tagged",
-  tag: "v2.0.1"
-});
-support_20x.merge(develop);
-support_11x.commit();
-support_11x.commit({
-  dotStrokeWidth: 10,
-  message: "Release v1.1.3 tagged",
-  tag: "v1.1.3"
-});
-feature6.merge(develop);
-
-var release_210 = gitgraph.branch({
-  parentBranch: develop,
-  name: "release/v2.1.0",
-  column: releaseCol
-});
-release_210.commit({
-  message: "Start v2.1.0-rc Release Candidate builds",
-  tag: "v2.1.0-rc",
-  tagColor: 'gray'
-})
-release_210.commit(stabilizationCommit);
-release_210.merge(master, {
-  dotStrokeWidth: 10,
-  message: "Release v2.1.0 tagged",
-  tag: "v2.1.0"
-});
-master.merge(develop);*/
+general_2_5_6_0.commit("Initial commit");
+general_2_5_6_0.commit("Initial commit2");
