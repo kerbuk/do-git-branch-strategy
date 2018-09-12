@@ -97,12 +97,25 @@ var saas = gitgraph.branch({
 });
 saas.commit("Initial commit");
 
+
+
 /*develop브랜치의 feature 생성*/
 var feature1 = gitgraph.branch({
   parentBranch: develop,
   name: "feature/개선A",
   column: devBranchCol
 });
+feature1.commit("A기능 개선");
+feature1.merge(develop);
+develop.commit("commit");
+
+/*develop브랜치의 feature 생성*/
+var feature2 = gitgraph.branch({
+  parentBranch: develop,
+  name: "feature/개선B",
+  column: devBranchCol
+});
+
 ////저....밑에서 머지할거임..
 
 /*general 브랜치의 bugfix 생성*/
@@ -153,8 +166,8 @@ develop.merge(master, {
   tag: "tags/2.5.5.2"
 });
 
-feature1.commit("A기능 개선");
-feature1.merge(develop);
+feature2.commit("B기능 개선");
+feature2.merge(develop);
 
 general.commit("중간중간 수정");
 
@@ -192,11 +205,11 @@ var release = gitgraph.branch({
   name: "release/2.5.6.0",
   column: generalBranchCol
 });
+
 release.commit("butFix");
 release.commit("버그F commit");
 release.commit("버그G commit");
 release.commit("버그H commit");
-//release.merge(general);
 release.merge(develop);
 develop.merge(master, {
   dotStrokeWidth: 10,
@@ -205,7 +218,6 @@ develop.merge(master, {
 });
 
 saas.commit("committtttt");
-//general.commit("committttt");
 develop.commit("committtt");
 master.commit("committtt");
 

@@ -4,21 +4,28 @@
 <head>
   <meta charset="UTF-8">
   <title>Git Flow with support</title>
-  <link rel="stylesheet" type="text/css" href="../src/gitgraph.css" />
+  <link rel="stylesheet" type="text/css" href="lib/gitgraph.css" />
   <style>
     body {
       margin: 0;
       padding: 0;
     }
+	.title {
+		text-align:center;
+		margin-top : 50px;
+		font-weight : bold;
+		font-size : 30px;
+	}
 
   </style>
 </head>
 
 <body>
+<div class="title">DO Branch Strategy</div>
   <canvas id="gitGraph"></canvas>
   <div id="detail" class="gitgraph-detail"></div>
-  <script src="src/gitgraph.js"></script>
-  <script src="gitflowsupport.js"></script>
+  <script src="lib/gitgraph.js"></script>
+  <script src="branch.js"></script>
 </body>
 
 </html>
