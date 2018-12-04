@@ -217,12 +217,12 @@ develop.merge(master, {
   tag: "tags/2.5.6.0"
 });
 
-saas.commit("committtttt");
+saas.commit("committttttt");
 develop.commit("committtt");
 master.commit("committtt");
 
 var general_2_5_6_0 = gitgraph.branch({
-  name: "general/2.5.6.0",
+  name: "general/2.5.6",
   column: newGeneralBranchCol
 });
 general_2_5_6_0.commit("Initial commit");
