@@ -199,7 +199,7 @@ general.merge(develop,{
 });
 general.commit("commit");
 
-/* release 브랜치 생성 , 태그용*/
+/* release 브랜치 생성 , 태그용용*/
 var release = gitgraph.branch({
   parentBranch: general,
   name: "release/2.5.6.0",
